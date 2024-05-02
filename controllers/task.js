@@ -27,7 +27,7 @@ export const PostTask = async (req, res) => {
 
 export const GetTasks = async (req, res) => {
     try {
-        console.log('SHEEEEHS')
+        console.log('sheeehs')
         const { userId } = req.params;
         res.json(await prisma.task.findMany(
             {

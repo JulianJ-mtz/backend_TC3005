@@ -25,7 +25,7 @@ export const PostLog = async (req, res) => {
 
 export const GetLogs = async (req, res) => {
     try {
-        console.log('SHEEEEHS')
+        console.log('sheeehs')
         res.json(await prisma.logs.findMany());
     } catch (error) {
         res.status(500).json({ error: "Error al crear la tarea" });

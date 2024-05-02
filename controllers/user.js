@@ -24,24 +24,25 @@ export const PostUser = async (req, res) => {
     }
 }
 
-
 export const GetUser = async (req, res) => {
     try {
         res.json(await prisma.user.findMany({
             include: {
                 tasks: {
                     select: {
-                        title: true
-                    }
-                },
-                logs: {
-                    select: {
-                        message: true
+                        id: true,
+                        title: true,
+                        logs: {
+                            select: {
+                                id: true,
+                                message: true,
+                            }
+                        }
                     }
                 }
             }
         }));
-        console.log('SHEEEEHS')
+        console.log('sheeehs')
     } catch (error) {
         console.error('Error! Entry not found:', error);
         res.status(500).json({ error: 'Internal Server Error' });

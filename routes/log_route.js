@@ -8,6 +8,3 @@ router.post("/post/:userId", PostLog);
 router.get("/get", GetLogs)
 
 export default router;
-
-
-
