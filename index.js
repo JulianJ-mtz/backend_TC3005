@@ -5,7 +5,7 @@ import router from "./routes/index.js";
 // import os from 'os'; // Import the 'os' module
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
 // const interfaces = os.networkInterfaces();
 dotenv.config();
 

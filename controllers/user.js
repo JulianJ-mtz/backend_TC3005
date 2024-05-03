@@ -30,11 +30,11 @@ export const GetUser = async (req, res) => {
             include: {
                 tasks: {
                     select: {
-                        id: true,
+                        // id: true,
                         title: true,
                         logs: {
                             select: {
-                                id: true,
+                                // id: true,
                                 message: true,
                             }
                         }

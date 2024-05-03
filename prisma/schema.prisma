@@ -13,12 +13,11 @@ model user {
   email    String
   password String
   logs     logs[]
-  tasks    task[]
+  task     task[]
 }
 
 model task {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  // taskId    String   @default(uuid()) @map("taskId")
   title     String
   content   String
   createdAt DateTime @default(now())
@@ -29,7 +28,6 @@ model task {
 
 model logs {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  // logsId    String   @default(uuid()) @map("logId")
   createdAt DateTime @default(now())
   message   String
   taskId    String   @db.ObjectId
