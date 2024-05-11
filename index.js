@@ -2,21 +2,21 @@ import dotenv from "dotenv";
 import express from "express";
 import bodyParser from "body-parser";
 import router from "./routes/index.js";
-// import os from 'os'; // Import the 'os' module
+import os from 'os'; // Import the 'os' module
 
 const app = express();
 const PORT = 3001;
-// const interfaces = os.networkInterfaces();
+const interfaces = os.networkInterfaces();
 dotenv.config();
 
-// let HOST = "";
-// Object.keys(interfaces).forEach((key) => {
-//   interfaces[key].forEach((details) => {
-//     if (details.family === "IPv4" && !details.internal) {
-//       HOST = details.address;
-//     }
-//   });
-// });
+let HOST = '';
+Object.keys(interfaces).forEach((key) => {
+  interfaces[key].forEach((details) => {
+    if (details.family === "IPv4" && !details.internal) {
+      HOST = details.address;
+    }
+  });
+});
 
 app.use(bodyParser.json());
 app.use(
@@ -27,7 +27,7 @@ app.use(
 app.use(router);
 
 app.listen(PORT, () => {
-    console.log(`Server ready at localhost:${PORT}`);
+    console.log(`Server ready at: ${HOST}:${PORT}`);
 });
 
 export default app;

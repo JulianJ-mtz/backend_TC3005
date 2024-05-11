@@ -21,6 +21,7 @@ model task {
   title     String
   content   String
   createdAt DateTime @default(now())
+  // status    Boolean
   logs      logs[]
   userId    String?  @db.ObjectId
   user      user?    @relation(fields: [userId], references: [id])
