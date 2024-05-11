@@ -1,10 +1,21 @@
 import { PrismaClient } from "@prisma/client";
+import { jsonResponse } from "../lib/json-response.js";
 
 const prisma = new PrismaClient();
+
+
 
 export const PostUser = async (req, res) => {
     try {
         const { username, email, password } = req.body;
+
+        if (!username || !email || !password) {
+            return res.status(400).json(
+                jsonResponse(400, {
+                    error: "Fields are required"
+                })
+            )
+        }
 
         const newUserData = {
             username,
@@ -18,6 +29,7 @@ export const PostUser = async (req, res) => {
 
         res.json(newUser);
         console.log('sheeehs');
+
     } catch (error) {
         console.error('Error! Entry not found:', error);
         res.status(500).json({ error: 'Internal Server Error' });

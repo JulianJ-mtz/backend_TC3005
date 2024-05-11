@@ -3,8 +3,11 @@ import express from "express";
 import bodyParser from "body-parser";
 import router from "./routes/index.js";
 import os from 'os'; // Import the 'os' module
+import mongoose from "mongoose";
+import cors from "cors"
 
 const app = express();
+
 const PORT = 3001;
 const interfaces = os.networkInterfaces();
 dotenv.config();
@@ -18,16 +21,17 @@ Object.keys(interfaces).forEach((key) => {
   });
 });
 
+app.use(cors())
 app.use(bodyParser.json());
 app.use(
-    bodyParser.urlencoded({
-        extended: true,
-    }),
+  bodyParser.urlencoded({
+    extended: true,
+  }),
 );
 app.use(router);
 
 app.listen(PORT, () => {
-    console.log(`Server ready at: ${HOST}:${PORT}`);
+  console.log(`Server ready at localhost:${PORT}`);
 });
 
 export default app;
