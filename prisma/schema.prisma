@@ -9,11 +9,16 @@ datasource db {
 
 model user {
   id       String @id @default(auto()) @map("_id") @db.ObjectId
-  username String
+  username String @unique
   email    String
   password String
   logs     logs[]
   task     task[]
+}
+
+model tokens {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  token String
 }
 
 model task {
@@ -21,7 +26,7 @@ model task {
   title     String
   content   String
   createdAt DateTime @default(now())
-  // status    Boolean
+  status    status   @default(not_started)
   logs      logs[]
   userId    String?  @db.ObjectId
   user      user?    @relation(fields: [userId], references: [id])
@@ -35,4 +40,10 @@ model logs {
   userId    String   @db.ObjectId
   task      task     @relation(fields: [taskId], references: [id])
   user      user     @relation(fields: [userId], references: [id])
+}
+
+enum status {
+  not_started
+  in_progress
+  done
 }
