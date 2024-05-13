@@ -3,10 +3,7 @@ import userRoutes from "./user_routes.js"
 import taskRoutes from "./task_routes.js"
 import logRoutes from "./log_route.js"
 
-import { authenticate } from "../controllers/auth/authenticate.js";
-
 const router = express.Router();
-
 
 router.use("/user", userRoutes);
 router.use("/task", taskRoutes);
