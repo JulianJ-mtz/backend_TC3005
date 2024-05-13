@@ -4,6 +4,9 @@ import bcrypt from "bcrypt"
 const prisma = new PrismaClient();
 
 import { generateAccessToken, generateRefreshToken } from "./auth/generateTokens.js"
+import { getTokenFromHeader } from "./auth/getTokenFromHeader.js";
+import e from "express";
+import { verifyRefreshToken } from "./auth/verifyTokens.js";
 
 export const PostUser = async (req, res) => {
     try {
@@ -29,17 +32,44 @@ export const PostUser = async (req, res) => {
             data: newUserData
         })
 
-        res.status(200).json(newUser)
-
+        // res.status(200).json(newUser)
+        res.status(200).json(jsonResponse(200, { newUser }));
         console.log(newUser);
-        console.log(hashPassword);
-
     } catch (error) {
         console.error('Error! Entry not found:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 }
 
+export const GetUser = async (req, res) => {
+    try {
+        res.json(await prisma.user.findMany({
+            include: {
+                task: {
+                    select: {
+                        id: true,
+                        title: true,
+                        status: true,
+                        logs: {
+                            select: {
+                                // id: true,
+                                message: true,
+                            }
+                        }
+                    }
+                }
+            }
+        }));
+        console.log('sheeehs')
+    } catch (error) {
+        console.error('Error! Entry not found:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+
+export const User = (req, res) => {
+    res.status(200).json(jsonResponse(200, req.user));
+}
 
 export const AuthUser = async (req, res) => {
     try {
@@ -53,7 +83,6 @@ export const AuthUser = async (req, res) => {
             )
         }
 
-        // const user = username;
         const thisUser = await prisma.user.findUnique({
             where: {
                 username: username,
@@ -72,7 +101,7 @@ export const AuthUser = async (req, res) => {
                     }
                 })
 
-                res.status(200).json(jsonResponse(200, { thisUser: thisUser.username, accessToken, refreshToken }));
+                res.status(200).json(jsonResponse(200, { thisUser: thisUser.username, accessToken, refreshToken: refreshToken.token }));
             } else {
                 res.status(400).json(jsonResponse(400, { error: "User or password is incorrect" }))
             }
@@ -86,29 +115,38 @@ export const AuthUser = async (req, res) => {
     }
 }
 
+export const RefreshToken = async (req, res) => {
+    const refreshToken = getTokenFromHeader(req.headers)
 
-
-export const GetUser = async (req, res) => {
-    try {
-        res.json(await prisma.user.findMany({
-            include: {
-                task: {
-                    select: {
-                        // id: true,
-                        title: true,
-                        logs: {
-                            select: {
-                                // id: true,
-                                message: true,
-                            }
-                        }
-                    }
+    if (refreshToken) {
+        try {
+            const found = await prisma.tokens.findUnique({
+                where: {
+                    token: refreshToken
                 }
+            })
+
+            if (!found) {
+                return res.status(401).send(jsonResponse(401, { error: "Unauthorized" }))
             }
-        }));
-        console.log('sheeehs')
-    } catch (error) {
-        console.error('Error! Entry not found:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+
+            const payload = verifyRefreshToken(found.token);
+            if (payload) {
+                const accessToken = generateAccessToken(payload.user)
+
+                return res.status(200).json(jsonResponse(200, { accessToken }))
+            } else {
+                return res.status(401).send(jsonResponse(401, { error: "Unauthorized" }))
+            }
+
+        } catch (error) {
+            return res.status(401).send(jsonResponse(401, { error: "Unauthorized" }))
+        }
+    } else {
+        res.status(401).send(jsonResponse(401, { error: "Unauthorized" }))
     }
-} 
+}
+
+
+
+
